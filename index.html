@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全制式多链路网关 — 工业通信，一站贯通</title>
+<meta name="description" content="全制式多链路网关 — 多协议智能解析、MPTCP多链路聚合、PLC无感迁移。工业通信基础设施，为智能制造而生。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET & VARIABLES
+   ============================================================ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --base: #FFFFFF;
+    --ink: #000000;
+    --accent: #2563eb;
+    --accent-glow: rgba(37, 99, 235, 0.15);
+    --muted: #888888;
+    --surface: #F5F5F0;
+    --term-bg: #08080A;
+    --term-green: #00FF66;
+    --term-amber: #FFAA00;
+
+    --border: 4px solid var(--ink);
+    --border-thin: 1px solid var(--ink);
+    --shadow: 8px 8px 0px var(--ink);
+    --shadow-accent: 8px 8px 0px var(--accent);
+    --shadow-hover: 4px 4px 0px var(--ink);
+
+    --fs-hero: clamp(3rem, 7vw, 6rem);
+    --fs-h1: clamp(2rem, 4vw, 4rem);
+    --fs-h2: clamp(1.4rem, 2.5vw, 2.5rem);
+    --fs-h3: clamp(1rem, 1.4vw, 1.4rem);
+    --fs-body: clamp(0.9rem, 1.1vw, 1.1rem);
+    --fs-data: clamp(0.78rem, 0.9vw, 0.95rem);
+    --fs-micro: 0.62rem;
+    --fs-stat: clamp(2rem, 4vw, 3.5rem);
+    --fs-spec: clamp(1.6rem, 3vw, 2.8rem);
+
+    --gap: clamp(1rem, 2vw, 2rem);
+    --section-pad: clamp(3rem, 8vw, 8rem) clamp(1rem, 4vw, 4rem);
+    --header-h: 44px;
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--base);
+    overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+::selection { background: var(--accent); color: var(--base); }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3, h4, .font-display {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 0.85;
+    letter-spacing: -0.03em;
+}
+
+.accent { color: var(--accent); }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.8em 2em;
+    border: var(--border);
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    background: var(--base);
+}
+
+.btn--primary {
+    background: var(--accent);
+    color: var(--base);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-accent);
+}
+.btn--primary:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0px var(--ink); }
+.btn--primary:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
+
+.btn--ghost {
+    background: var(--base);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+}
+.btn--ghost:hover { background: var(--ink); color: var(--base); transform: translate(-4px, -4px); box-shadow: 12px 12px 0px var(--ink); }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.header {
+    position: fixed;
+    top: 0; left: 0; width: 100%;
+    height: var(--header-h);
+    z-index: 1000;
+    background: var(--ink);
+    color: var(--base);
+    border-bottom: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    padding: 0 clamp(1rem, 3vw, 3rem);
+}
+.header__inner {
+    width: 100%; max-width: 1440px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.header__left { display: flex; align-items: center; gap: 1.2rem; }
+.header__logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 0.8rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    display: flex; align-items: center; gap: 0.5rem; white-space: nowrap;
+}
+.header__logo-mark {
+    width: 22px; height: 22px;
+    border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.header__logo-mark svg { width: 12px; height: 12px; }
+.header__sep { width: 1px; height: 16px; background: rgba(255,255,255,0.12); }
+.header__product { font-size: var(--fs-micro); letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.4; }
+
+.header__nav { display: flex; align-items: stretch; height: var(--header-h); border-left: 1px solid rgba(255,255,255,0.10); }
+.header__nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 0 1.2rem; display: flex; align-items: center;
+    border-right: 1px solid rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.5); transition: background 0s, color 0s;
+}
+.header__nav a:hover { background: var(--accent); color: var(--base); }
+.header__nav a.active { background: rgba(255,255,255,0.06); color: var(--base); }
+
+.header__right { display: flex; align-items: center; gap: 1.2rem; }
+.header__status {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: 0.12em;
+}
+.header__status-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--term-green);
+    animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.header__clock {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--fs-micro); font-weight: 500; letter-spacing: 0.08em;
+    opacity: 0.7; min-width: 7em; text-align: right;
+}
+.header__burger { display: none; flex-direction: column; gap: 4px; cursor: pointer; background: none; border: none; padding: 4px; }
+.header__burger span { width: 22px; height: 2px; background: var(--base); transition: transform 0.3s, opacity 0.3s; }
+
+/* ============================================================
+   HERO — Product Focus
+   ============================================================ */
+.hero {
+    min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    padding: var(--section-pad);
+    padding-top: calc(var(--header-h) + 3rem);
+    position: relative; overflow: hidden;
+    border-bottom: var(--border);
+}
+.hero__grid {
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+}
+.hero__grid::after {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    width: 180px; height: 180px; transform: translate(-50%, -50%);
+    border: 1px solid var(--accent); border-radius: 50%; opacity: 0.12;
+}
+.hero__label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.22em;
+    color: var(--accent); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.8rem; position: relative; z-index: 1;
+}
+.hero__label::before { content: ''; width: 30px; height: 1px; background: var(--accent); }
+
+.hero__product-wrap {
+    position: relative; z-index: 1;
+    width: min(42vw, 480px);
+    margin: 1.5rem 0 2rem;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.18));
+}
+.hero__product-wrap img {
+    width: 100%; height: auto;
+}
+
+.hero__title {
+    font-size: var(--fs-hero);
+    line-height: 0.82; letter-spacing: -0.05em;
+    position: relative; z-index: 1; margin-bottom: 0.8rem;
+}
+.hero__subtitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(0.85rem, 1.5vw, 1.3rem);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); margin-bottom: 2rem; position: relative; z-index: 1;
+}
+.hero__stats {
+    display: flex; gap: clamp(2rem, 4vw, 4rem);
+    position: relative; z-index: 1; margin-bottom: 2.5rem;
+    flex-wrap: wrap; justify-content: center;
+}
+.hero__stat-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: var(--fs-stat);
+    line-height: 1; letter-spacing: -0.04em;
+}
+.hero__stat-label {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em;
+    opacity: 0.35; margin-top: 0.3rem;
+}
+.hero__actions { display: flex; gap: 1rem; position: relative; z-index: 1; flex-wrap: wrap; justify-content: center; }
+
+.hero__coords {
+    position: absolute; bottom: clamp(1.5rem, 3vw, 3rem); left: clamp(1rem, 4vw, 4rem);
+    font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.15;
+}
+.hero__version {
+    position: absolute; bottom: clamp(1.5rem, 3vw, 3rem); right: clamp(1rem, 4vw, 4rem);
+    font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.15;
+}
+
+/* ============================================================
+   METRICS BAR
+   ============================================================ */
+.metrics-bar {
+    display: flex;
+    border-bottom: var(--border);
+}
+.metrics-bar__cell {
+    flex: 1; padding: clamp(1rem, 2vw, 1.8rem);
+    border-right: var(--border-thin);
+    background: var(--base);
+    transition: background 0s;
+    cursor: default;
+}
+.metrics-bar__cell:last-child { border-right: none; }
+.metrics-bar__cell:hover { background: var(--ink); color: var(--base); }
+.metrics-bar__cell:hover .bar-track { background: rgba(255,255,255,0.15); }
+.metrics-bar__label { font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: 0.16em; opacity: 0.4; margin-bottom: 0.4rem; }
+.metrics-bar__value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: var(--fs-spec); line-height: 1; letter-spacing: -0.04em;
+}
+.metrics-bar__unit { font-family: 'JetBrains Mono', monospace; font-size: 0.4em; font-weight: 400; opacity: 0.5; margin-left: 0.1em; }
+.metrics-bar .bar-track { width: 100%; height: 3px; background: rgba(0,0,0,0.06); margin-top: 0.6rem; overflow: hidden; }
+.metrics-bar .bar-track__fill { height: 100%; background: var(--accent); }
+
+/* ============================================================
+   SECTION SHARED
+   ============================================================ */
+.section { padding: var(--section-pad); border-bottom: var(--border); }
+.section--surface { background: var(--surface); }
+.section__eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.22em;
+    color: var(--accent); margin-bottom: 0.8rem;
+}
+.section__title { font-size: var(--fs-h1); margin-bottom: clamp(2rem, 4vw, 4rem); }
+.section__header { margin-bottom: clamp(2rem, 4vw, 4rem); }
+.container { width: 100%; max-width: 1440px; margin: 0 auto; padding-inline: clamp(1rem, 4vw, 4rem); }
+
+/* ============================================================
+   BENTO GRID
+   ============================================================ */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap);
+}
+.bento-card {
+    border: var(--border);
+    box-shadow: var(--shadow);
+    padding: clamp(1.2rem, 2vw, 2rem);
+    background: var(--base);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    transition: none;
+    cursor: default;
+    overflow: hidden;
+}
+.bento-card:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0px var(--ink); }
+.bento-card--dark { background: var(--ink); color: var(--base); box-shadow: var(--shadow-accent); }
+.bento-card--dark:hover { box-shadow: 12px 12px 0px var(--accent); }
+.bento-card--accent { background: var(--accent); color: var(--base); }
+.bento-card--accent:hover { box-shadow: 12px 12px 0px var(--ink); }
+
+.bento-card__id {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    opacity: 0.3; margin-bottom: 0.8rem;
+}
+.bento-card__title { font-size: var(--fs-h3); margin-bottom: 0.5rem; line-height: 0.9; }
+.bento-card__text { font-size: var(--fs-data); line-height: 1.7; opacity: 0.55; }
+.bento-card__stat {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1; letter-spacing: -0.04em; align-self: end;
+}
+.bento-card__tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; align-self: end; }
+
+.tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    padding: 0.3em 0.7em;
+    border: 2px solid var(--ink);
+    background: var(--base);
+}
+.tag--filled { background: var(--ink); color: var(--base); }
+.tag--accent { background: var(--accent); color: var(--base); border-color: var(--accent); }
+
+/* Sparkline */
+.spark { display: flex; align-items: flex-end; gap: 2px; height: 28px; margin-top: 1rem; }
+.spark__bar { flex: 1; background: var(--accent); min-height: 2px; opacity: 0.7; }
+
+/* Bar chart */
+.bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 50px; margin-top: 1rem; }
+.bar-chart__col { flex: 1; background: var(--accent); min-height: 3px; border: 2px solid var(--ink); }
+.bento-card--dark .bar-chart__col { border-color: var(--accent); }
+
+.bar-track { width: 100%; height: 4px; background: rgba(0,0,0,0.06); margin-top: 0.8rem; overflow: hidden; }
+.bento-card--dark .bar-track { background: rgba(255,255,255,0.12); }
+.bar-track__fill { height: 100%; background: var(--accent); transition: width 0.8s ease; }
+
+/* ============================================================
+   SPEC GRID
+   ============================================================ */
+.spec-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: var(--border);
+    box-shadow: var(--shadow);
+}
+.spec-cell {
+    padding: clamp(1.2rem, 2vw, 2rem);
+    border-right: var(--border-thin);
+    border-bottom: var(--border-thin);
+    background: var(--base);
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    min-height: 180px;
+    transition: none;
+    cursor: default;
+}
+.spec-cell:nth-child(4n) { border-right: none; }
+.spec-cell:nth-last-child(-n+4) { border-bottom: none; }
+.spec-cell:hover { background: var(--ink); color: var(--base); }
+.spec-cell--dark { background: var(--ink); color: var(--base); }
+.spec-cell--dark:hover { background: var(--accent); }
+.spec-cell--accent { background: var(--accent); color: var(--base); }
+.spec-cell--accent:hover { background: var(--ink); }
+
+.spec-cell__id { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.2em; opacity: 0.3; margin-bottom: 0.8rem; }
+.spec-cell__label { font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: 0.18em; opacity: 0.5; margin-bottom: 0.4rem; }
+.spec-cell__value { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: var(--fs-spec); line-height: 0.9; letter-spacing: -0.04em; }
+.spec-cell__unit { font-family: 'JetBrains Mono', monospace; font-size: 0.5em; font-weight: 400; opacity: 0.5; margin-left: 0.12em; }
+.spec-cell__note { font-size: var(--fs-data); line-height: 1.5; opacity: 0.5; margin-top: 0.8rem; }
+
+.spec-cell .bar-track { margin-top: 1rem; }
+.spec-cell--dark .bar-track { background: rgba(255,255,255,0.15); }
+.spec-cell--accent .bar-track { background: rgba(255,255,255,0.2); }
+.spec-cell--accent .bar-track__fill { background: var(--base); }
+
+/* ============================================================
+   EXPLODED VIEW SECTION
+   ============================================================ */
+.exploded-section { background: var(--term-bg); color: var(--base); border-bottom: var(--border); }
+.exploded__inner {
+    max-width: 1440px; margin: 0 auto; padding: var(--section-pad);
+    display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--gap);
+    align-items: center;
+}
+.exploded__text { grid-column: span 4; }
+.exploded__text .section__eyebrow { color: var(--term-green); }
+.exploded__text .section__title { color: var(--base); }
+.exploded__desc {
+    font-size: var(--fs-data); line-height: 1.9; opacity: 0.5; margin-top: 1.5rem; max-width: 360px;
+}
+.exploded__visual {
+    grid-column: span 8;
+    display: flex; align-items: center; justify-content: center;
+}
+.exploded__visual img {
+    max-width: 100%; max-height: 65vh;
+    filter: drop-shadow(0 20px 48px rgba(37,99,235,0.25));
+}
+
+/* ============================================================
+   SCENARIOS
+   ============================================================ */
+.scenarios__inner { max-width: 1440px; margin: 0 auto; }
+.scenarios-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap);
+}
+.scenario-card {
+    border: var(--border); box-shadow: var(--shadow);
+    padding: clamp(1rem, 1.8vw, 1.8rem);
+    background: var(--base); transition: none; cursor: default;
+    min-height: 200px; display: grid; grid-template-rows: auto 1fr auto;
+}
+.scenario-card:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0px var(--ink); }
+.scenario-card__num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 0.55rem;
+    text-transform: uppercase; letter-spacing: 0.18em;
+    opacity: 0.25; margin-bottom: 1rem;
+}
+.scenario-card__title { font-size: var(--fs-h3); margin-bottom: 0.6rem; line-height: 0.9; }
+.scenario-card__text { font-size: var(--fs-data); line-height: 1.7; opacity: 0.5; }
+
+/* ============================================================
+   CTA BAND
+   ============================================================ */
+.cta-band {
+    padding: clamp(3rem, 6vw, 6rem) clamp(1rem, 4vw, 4rem);
+    border-bottom: var(--border);
+    text-align: center;
+    background: var(--ink);
+    color: var(--base);
+}
+.cta-band__inner { max-width: 680px; margin: 0 auto; }
+.cta-band__title { font-size: var(--fs-h1); margin-bottom: 1.2rem; }
+.cta-band__text { font-size: var(--fs-data); line-height: 1.9; opacity: 0.45; margin-bottom: 2.5rem; }
+.cta-band__actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* ============================================================
+   TICKER
+   ============================================================ */
+.ticker {
+    border-bottom: var(--border);
+    background: var(--ink); color: var(--base);
+    overflow: hidden; padding: 1rem 0;
+}
+.ticker--accent { background: var(--accent); }
+.ticker--accent .ticker__item::after { background: var(--base); }
+.ticker__track { display: flex; width: max-content; animation: tickerScroll 24s linear infinite; }
+.ticker--reverse .ticker__track { animation-direction: reverse; animation-duration: 34s; }
+.ticker__item {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: clamp(1rem, 2vw, 1.8rem);
+    text-transform: uppercase; letter-spacing: -0.02em;
+    white-space: nowrap; padding: 0 2rem;
+    display: flex; align-items: center; gap: 2rem;
+}
+.ticker__item::after {
+    content: ''; width: 10px; height: 10px;
+    background: var(--accent); flex-shrink: 0;
+}
+@keyframes tickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+    background: var(--ink); color: var(--base);
+    padding: clamp(2.5rem, 5vw, 4rem) clamp(1rem, 4vw, 4rem);
+}
+.footer__inner { max-width: 1440px; margin: 0 auto; }
+.footer__top {
+    display: grid; grid-template-columns: repeat(12, 1fr);
+    gap: var(--gap); padding-bottom: clamp(3rem, 6vw, 6rem);
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.footer__brand { grid-column: span 5; }
+.footer__brand-name { font-size: var(--fs-h2); margin-bottom: 1.2rem; }
+.footer__brand-desc {
+    font-size: var(--fs-data); opacity: 0.45; line-height: 1.8; max-width: 340px;
+}
+.footer__col { grid-column: span 2; }
+.footer__col:last-child { grid-column: span 3; }
+.footer__col-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.18em;
+    color: var(--accent); margin-bottom: 1.2rem; font-weight: 500;
+}
+.footer__col a {
+    display: block; font-size: var(--fs-data);
+    opacity: 0.5; margin-bottom: 0.6rem; transition: opacity 0.2s;
+}
+.footer__col a:hover { opacity: 1; color: var(--accent); }
+.footer__bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 2rem; gap: 1rem; flex-wrap: wrap;
+}
+.footer__copy { font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 0.05em; }
+.footer__copy a { color: var(--accent); font-weight: 500; }
+.footer__copy a:hover { text-decoration: underline; }
+.footer__back-top {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em;
+    opacity: 0.4; cursor: pointer; background: none; border: none; color: var(--base);
+    transition: opacity 0.2s;
+}
+.footer__back-top:hover { opacity: 1; color: var(--accent); }
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+.reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .bento-grid { grid-template-columns: repeat(2, 1fr); }
+    .spec-grid { grid-template-columns: repeat(2, 1fr); }
+    .spec-cell:nth-child(4n) { border-right: var(--border-thin); }
+    .spec-cell:nth-child(2n) { border-right: none; }
+    .spec-cell:nth-last-child(-n+4) { border-bottom: var(--border-thin); }
+    .spec-cell:nth-last-child(-n+2) { border-bottom: none; }
+    .scenarios-grid { grid-template-columns: repeat(2, 1fr); }
+    .exploded__text { grid-column: span 12; }
+    .exploded__visual { grid-column: span 12; margin-top: 2rem; }
+    .metrics-bar { flex-wrap: wrap; }
+    .metrics-bar__cell { flex: 0 0 33.333%; }
+    .metrics-bar__cell:nth-child(3n) { border-right: none; }
+    .metrics-bar__cell:nth-child(-n+3) { border-bottom: var(--border-thin); }
+    .footer__brand { grid-column: span 12; margin-bottom: 2rem; }
+    .footer__col { grid-column: span 4; }
+    .footer__col:last-child { grid-column: span 4; }
+}
+
+@media (max-width: 768px) {
+    .header__nav { display: none; }
+    .header__product { display: none; }
+    .header__burger { display: flex; }
+    .header__nav.open {
+        display: flex; flex-direction: column;
+        position: absolute; top: var(--header-h); left: 0; width: 100%;
+        height: auto; background: var(--ink);
+        border-bottom: 2px solid var(--accent);
+        overflow-y: auto; max-height: calc(100vh - var(--header-h));
+    }
+    .header__nav.open a {
+        border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06);
+        padding: 0.9rem clamp(1rem, 3vw, 3rem); height: auto;
+    }
+    .bento-grid { grid-template-columns: 1fr; }
+    .spec-grid { grid-template-columns: 1fr; }
+    .spec-cell, .spec-cell:nth-child(4n), .spec-cell:nth-child(2n) { border-right: none; border-bottom: var(--border-thin); }
+    .spec-cell:last-child { border-bottom: none; }
+    .scenarios-grid { grid-template-columns: 1fr; }
+    .metrics-bar__cell { flex: 0 0 50%; }
+    .metrics-bar__cell:nth-child(3n) { border-right: var(--border-thin); }
+    .metrics-bar__cell:nth-child(2n) { border-right: none; }
+    .metrics-bar__cell:nth-child(-n+3) { border-bottom: var(--border-thin); }
+    .metrics-bar__cell:nth-child(-n+4) { border-bottom: var(--border-thin); }
+    .hero__stats { flex-direction: column; gap: 1.5rem; }
+    .hero__actions { flex-direction: column; width: 100%; }
+    .btn { width: 100%; }
+    .footer__col { grid-column: span 6; }
+    .footer__col:last-child { grid-column: span 6; }
+    .footer__bottom { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 480px) {
+    .metrics-bar__cell { flex: 0 0 100%; border-right: none; border-bottom: var(--border-thin); }
+    .metrics-bar__cell:last-child { border-bottom: none; }
+    .footer__col, .footer__col:last-child { grid-column: 1 / -1; }
+    .header__status span { display: none; }
+    .hero__product-wrap { width: 80vw; }
+}
+</style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header class="header">
+    <div class="header__inner">
+        <div class="header__left">
+            <a href="#" class="header__logo" aria-label="全制式多链路网关">
+                <span class="header__logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" stroke="#2563eb" stroke-width="2.5"/>
+                        <line x1="12" y1="8" x2="12" y2="16" stroke="#2563eb" stroke-width="2"/>
+                        <line x1="8" y1="12" x2="16" y2="12" stroke="#2563eb" stroke-width="2"/>
+                    </svg>
+                </span>
+                多链路网关
+            </a>
+            <span class="header__sep"></span>
+            <span class="header__product">Full-System Gateway / v2</span>
+        </div>
+        <nav class="header__nav" id="headerNav">
+            <a href="#hero" class="active">首页</a>
+            <a href="#overview">产品概述</a>
+            <a href="#innovations">创新技术</a>
+            <a href="#specs">技术规格</a>
+            <a href="#exploded">结构解析</a>
+            <a href="#contact">联系我们</a>
+        </nav>
+        <div class="header__right">
+            <div class="header__status"><span class="header__status-dot"></span><span>系统运行中</span></div>
+            <div class="header__clock" id="utcClock">--:--:-- UTC</div>
+        </div>
+        <button class="header__burger" id="headerBurger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+    </div>
+</header>
+
+
+<!-- ====== HERO ====== -->
+<section class="hero" id="hero">
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="hero__label reveal">工业通信基础设施 &mdash; 全制式·多链路·边缘智能</div>
+
+    <div class="hero__product-wrap reveal">
+        <img src="产品完整图.png" alt="全制式多链路网关产品图">
+    </div>
+
+    <h1 class="hero__title reveal">全制式多链路<span class="accent">网关</span></h1>
+    <p class="hero__subtitle reveal">Full-System Multi-Link Industrial Gateway</p>
+
+    <div class="hero__stats reveal">
+        <div><div class="hero__stat-num">&lt;20<span class="accent">ms</span></div><div class="hero__stat-label">远程操控时延</div></div>
+        <div><div class="hero__stat-num">65<span class="accent">%</span></div><div class="hero__stat-label">集成周期缩短</div></div>
+        <div><div class="hero__stat-num">90<span class="accent">%</span></div><div class="hero__stat-label">停工风险下降</div></div>
+    </div>
+
+    <div class="hero__actions reveal">
+        <button class="btn btn--primary" onclick="document.getElementById('specs').scrollIntoView({behavior:'smooth'})">查看技术规格</button>
+        <button class="btn btn--ghost" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">联系我们</button>
+    </div>
+
+    <span class="hero__coords" aria-hidden="true">Industrial Communication &bull; Edge Computing</span>
+    <span class="hero__version" aria-hidden="true">FW v2.4.1 &mdash; Rev.C</span>
+</section>
+
+
+<!-- ====== METRICS BAR ====== -->
+<div class="metrics-bar">
+    <div class="metrics-bar__cell reveal">
+        <div class="metrics-bar__label">集成周期缩短</div>
+        <div class="metrics-bar__value">65<span class="metrics-bar__unit">%</span></div>
+        <div class="bar-track"><div class="bar-track__fill" style="width:65%"></div></div>
+    </div>
+    <div class="metrics-bar__cell reveal">
+        <div class="metrics-bar__label">运维人力下降</div>
+        <div class="metrics-bar__value">50<span class="metrics-bar__unit">%</span></div>
+        <div class="bar-track"><div class="bar-track__fill" style="width:50%"></div></div>
+    </div>
+    <div class="metrics-bar__cell reveal">
+        <div class="metrics-bar__label">停工风险下降</div>
+        <div class="metrics-bar__value">90<span class="metrics-bar__unit">%</span></div>
+        <div class="bar-track"><div class="bar-track__fill" style="width:90%"></div></div>
+    </div>
+    <div class="metrics-bar__cell reveal">
+        <div class="metrics-bar__label">硬件投入减少</div>
+        <div class="metrics-bar__value">70<span class="metrics-bar__unit">%</span></div>
+        <div class="bar-track"><div class="bar-track__fill" style="width:70%"></div></div>
+    </div>
+    <div class="metrics-bar__cell reveal">
+        <div class="metrics-bar__label">改造工期压缩</div>
+        <div class="metrics-bar__value">80<span class="metrics-bar__unit">%</span></div>
+        <div class="bar-track"><div class="bar-track__fill" style="width:80%"></div></div>
+    </div>
+    <div class="metrics-bar__cell reveal">
+        <div class="metrics-bar__label">远程操控时延</div>
+        <div class="metrics-bar__value">&lt;20<span class="metrics-bar__unit">ms</span></div>
+        <div class="bar-track"><div class="bar-track__fill" style="width:96%"></div></div>
+    </div>
+</div>
+
+
+<!-- ====== OVERVIEW SECTION ====== -->
+<section class="section" id="overview">
+    <div class="container">
+        <div class="section__header reveal">
+            <div class="section__eyebrow">// 产品概述</div>
+            <h2 class="section__title">工业通信<br>一站贯通</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:var(--gap);align-items:start;">
+            <div style="grid-column:span 5;" class="reveal">
+                <p style="font-size:var(--fs-data);line-height:2;opacity:0.6;max-width:420px;">
+                    全制式多链路网关是一款面向工业现场的关键通信基础设施。针对工厂设备协议异构、网络不稳、数据孤岛等核心痛点，以<strong>多协议智能解析引擎</strong>、<strong>MPTCP多链路聚合传输</strong>和<strong>PLC无感迁移</strong>三大核心技术，打通从设备层到云端的全链路数据通道。
+                </p>
+                <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1.5rem;">
+                    <span class="tag tag--accent">Modbus</span>
+                    <span class="tag">Profinet</span>
+                    <span class="tag tag--accent">OPC UA</span>
+                    <span class="tag">MQTT</span>
+                    <span class="tag tag--accent">5G</span>
+                    <span class="tag">4G</span>
+                    <span class="tag tag--accent">Wi-Fi</span>
+                    <span class="tag">Ethernet</span>
+                </div>
+            </div>
+            <div style="grid-column:span 7;display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);" class="reveal">
+                <div class="bento-card">
+                    <div class="bento-card__id">GW&mdash;01</div>
+                    <div><h3 class="bento-card__title">多协议<br>智能解析</h3><p class="bento-card__text">内置协议插件引擎，统一数据模型，屏蔽底层通信差异。</p></div>
+                    <div class="bento-card__stat">200<span style="font-size:0.35em;opacity:0.5">+协议</span></div>
+                </div>
+                <div class="bento-card bento-card--dark">
+                    <div class="bento-card__id">GW&mdash;02</div>
+                    <div><h3 class="bento-card__title">多链路<br>聚合传输</h3><p class="bento-card__text" style="opacity:0.55">MPTCP+SDN智能路由，弱网环境下业务不中断。</p></div>
+                    <div class="bento-card__stat">99.9<span style="font-size:0.35em;opacity:0.5">%</span></div>
+                </div>
+                <div class="bento-card bento-card--accent">
+                    <div class="bento-card__id">GW&mdash;03</div>
+                    <div><h3 class="bento-card__title">PLC无感<br>迁移</h3><p class="bento-card__text" style="opacity:0.75">不更换设备本体，探针采集+模板库自动生成映射规则。</p></div>
+                    <div class="bento-card__stat">0<span style="font-size:0.35em;opacity:0.5">小时停机</span></div>
+                </div>
+                <div class="bento-card">
+                    <div class="bento-card__id">GW&mdash;04</div>
+                    <div><h3 class="bento-card__title">远程运维<br>云平台</h3><p class="bento-card__text">设备监控、故障预警、OTA升级，一站式运维管理。</p></div>
+                    <div class="bar-chart"><div class="bar-chart__col" style="height:50%"></div><div class="bar-chart__col" style="height:75%"></div><div class="bar-chart__col" style="height:40%"></div><div class="bar-chart__col" style="height:90%"></div><div class="bar-chart__col" style="height:60%"></div><div class="bar-chart__col" style="height:100%"></div><div class="bar-chart__col" style="height:70%"></div><div class="bar-chart__col" style="height:85%"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ====== INNOVATION POINTS ====== -->
+<section class="section section--surface" id="innovations">
+    <div class="container">
+        <div class="section__header reveal">
+            <div class="section__eyebrow">// 三大创新技术</div>
+            <h2 class="section__title">核心技术<br>突破</h2>
+        </div>
+        <div class="bento-grid">
+            <!-- Innovation 1 -->
+            <div class="bento-card bento-card--dark reveal" style="grid-row:span 2;">
+                <div>
+                    <div class="bento-card__id" style="opacity:0.5">创新点 01</div>
+                    <h3 class="bento-card__title" style="font-size:var(--fs-h2);margin-bottom:1rem;">多协议智能<br>解析引擎</h3>
+                    <p class="bento-card__text" style="opacity:0.55;font-size:var(--fs-body);">
+                        构建协议插件化智能解析模型，覆盖200+工业协议，建立统一数据对象模型，通过唯一设备标识体系贯通不同品牌、不同年代的设备。彻底终结工业现场"协议烟囱"和"数据孤岛"。
+                    </p>
+                </div>
+                <div style="margin-top:1.5rem;">
+                    <div class="spark"><span class="spark__bar" style="height:30%"></span><span class="spark__bar" style="height:60%"></span><span class="spark__bar" style="height:45%"></span><span class="spark__bar" style="height:85%"></span><span class="spark__bar" style="height:55%"></span><span class="spark__bar" style="height:70%"></span><span class="spark__bar" style="height:40%"></span><span class="spark__bar" style="height:90%"></span><span class="spark__bar" style="height:65%"></span><span class="spark__bar" style="height:100%"></span></div>
+                    <div class="bento-card__stat" style="margin-top:1rem;">65<span style="font-size:0.35em;opacity:0.4;">%</span></div>
+                    <p style="font-size:0.6rem;opacity:0.35;text-transform:uppercase;letter-spacing:0.1em;">集成周期缩短</p>
+                </div>
+                <div class="bento-card__tags">
+                    <span class="tag" style="border-color:var(--accent);color:var(--accent);">协议插件化</span>
+                    <span class="tag" style="border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.6);">统一数据模型</span>
+                    <span class="tag" style="border-color:var(--accent);color:var(--accent);">设备标识体系</span>
+                </div>
+            </div>
+
+            <!-- Innovation 2 -->
+            <div class="bento-card reveal">
+                <div>
+                    <div class="bento-card__id">创新点 02</div>
+                    <h3 class="bento-card__title" style="font-size:var(--fs-h2);">MPTCP<br>多链路聚合</h3>
+                    <p class="bento-card__text">
+                        将同一连接拆分为多条子流，同时利用5G/4G/Wi-Fi/有线链路。控制指令走低延迟通道，视频/数据走大带宽通道，单链路断开时业务无感知切换。
+                    </p>
+                </div>
+                <div class="bento-card__tags">
+                    <span class="tag tag--accent">MPTCP</span>
+                    <span class="tag">SDN路由</span>
+                    <span class="tag tag--accent">弱网传输</span>
+                </div>
+                <div class="bento-card__stat">&lt;20<span style="font-size:0.35em;opacity:0.4;">ms</span></div>
+            </div>
+
+            <!-- Innovation 3 -->
+            <div class="bento-card bento-card--accent reveal">
+                <div>
+                    <div class="bento-card__id" style="opacity:0.5;">创新点 03</div>
+                    <h3 class="bento-card__title" style="font-size:var(--fs-h2);">PLC无感<br>迁移引擎</h3>
+                    <p class="bento-card__text" style="opacity:0.75;">
+                        非侵入式探针采集通信行为，自动生成点表模板与映射规则。无需更换设备本体、无需产线停机，即可完成存量设备的数据上云。
+                    </p>
+                </div>
+                <div class="bento-card__tags">
+                    <span class="tag" style="border-color:var(--base);color:var(--base);">探针采集</span>
+                    <span class="tag" style="border-color:var(--base);color:var(--base);">模板复用</span>
+                    <span class="tag" style="border-color:var(--base);color:var(--base);">不停机改造</span>
+                </div>
+                <div class="bento-card__stat">80<span style="font-size:0.35em;opacity:0.4;">%</span></div>
+                <p style="font-size:0.6rem;opacity:0.45;text-transform:uppercase;letter-spacing:0.1em;">工期压缩</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ====== TICKER ====== -->
+<div class="ticker" aria-hidden="true"><div class="ticker__track">
+    <span class="ticker__item">多协议智能解析</span><span class="ticker__item">MPTCP链路聚合</span><span class="ticker__item">PLC无感迁移</span><span class="ticker__item">边缘计算</span><span class="ticker__item">远程运维云平台</span><span class="ticker__item">工业网络安全</span><span class="ticker__item">全制式多链路网关</span>
+    <span class="ticker__item">多协议智能解析</span><span class="ticker__item">MPTCP链路聚合</span><span class="ticker__item">PLC无感迁移</span><span class="ticker__item">边缘计算</span><span class="ticker__item">远程运维云平台</span><span class="ticker__item">工业网络安全</span><span class="ticker__item">全制式多链路网关</span>
+</div></div>
+
+<div class="ticker ticker--reverse ticker--accent" aria-hidden="true"><div class="ticker__track">
+    <span class="ticker__item">工业通信</span><span class="ticker__item">一站贯通</span><span class="ticker__item">数据无孤岛</span><span class="ticker__item">网络不中断</span><span class="ticker__item">迁移不停机</span><span class="ticker__item">智能制造基础设施</span>
+    <span class="ticker__item">工业通信</span><span class="ticker__item">一站贯通</span><span class="ticker__item">数据无孤岛</span><span class="ticker__item">网络不中断</span><span class="ticker__item">迁移不停机</span><span class="ticker__item">智能制造基础设施</span>
+</div></div>
+
+
+<!-- ====== SPECS GRID ====== -->
+<section class="section" id="specs">
+    <div class="container">
+        <div class="section__header reveal">
+            <div class="section__eyebrow">// 技术规格</div>
+            <h2 class="section__title">硬件与通信<br>规格参数</h2>
+        </div>
+        <div class="spec-grid reveal">
+            <div class="spec-cell">
+                <div><div class="spec-cell__id">SP-01</div><div class="spec-cell__label">通信协议</div></div>
+                <div>
+                    <div class="spec-cell__value">200<span class="spec-cell__unit">+</span></div>
+                    <div class="spec-cell__note">Modbus / Profinet / OPC UA / MQTT / 私有串口协议</div>
+                </div>
+            </div>
+            <div class="spec-cell spec-cell--dark">
+                <div><div class="spec-cell__id">SP-02</div><div class="spec-cell__label">网络制式</div></div>
+                <div>
+                    <div class="spec-cell__value">全制式</div>
+                    <div class="spec-cell__note">5G / 4G / Wi-Fi 6 / 多路以太网 / RS485 / RS232</div>
+                </div>
+            </div>
+            <div class="spec-cell">
+                <div><div class="spec-cell__id">SP-03</div><div class="spec-cell__label">远程时延</div></div>
+                <div>
+                    <div class="spec-cell__value">&lt;20<span class="spec-cell__unit">ms</span></div>
+                    <div class="bar-track"><div class="bar-track__fill" style="width:96%"></div></div>
+                </div>
+            </div>
+            <div class="spec-cell spec-cell--accent">
+                <div><div class="spec-cell__id">SP-04</div><div class="spec-cell__label">聚合带宽</div></div>
+                <div>
+                    <div class="spec-cell__value">145<span class="spec-cell__unit">Mbps</span></div>
+                    <div class="spec-cell__note">4链路并发聚合，动态负载均衡</div>
+                </div>
+            </div>
+            <div class="spec-cell">
+                <div><div class="spec-cell__id">SP-05</div><div class="spec-cell__label">防护等级</div></div>
+                <div>
+                    <div class="spec-cell__value">IP40<span class="spec-cell__unit">+</span></div>
+                    <div class="spec-cell__note">工业级设计，宽温宽压，适应严苛现场环境</div>
+                </div>
+            </div>
+            <div class="spec-cell">
+                <div><div class="spec-cell__id">SP-06</div><div class="spec-cell__label">供电方式</div></div>
+                <div>
+                    <div class="spec-cell__value">宽压<span class="spec-cell__unit">DC</span></div>
+                    <div class="spec-cell__note">9-36V DC宽压工业供电，支持POE</div>
+                </div>
+            </div>
+            <div class="spec-cell spec-cell--dark">
+                <div><div class="spec-cell__id">SP-07</div><div class="spec-cell__label">边缘计算</div></div>
+                <div>
+                    <div class="spec-cell__value">ARM<span class="spec-cell__unit">Cortex</span></div>
+                    <div class="spec-cell__note">本地数据预处理、协议转换、规则引擎</div>
+                </div>
+            </div>
+            <div class="spec-cell">
+                <div><div class="spec-cell__id">SP-08</div><div class="spec-cell__label">安全加密</div></div>
+                <div>
+                    <div class="spec-cell__value">TLS<span class="spec-cell__unit">1.3</span></div>
+                    <div class="spec-cell__note">端到端加密传输，设备身份认证，安全启动</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ====== EXPLODED VIEW ====== -->
+<section class="exploded-section" id="exploded">
+    <div class="exploded__inner">
+        <div class="exploded__text reveal">
+            <div class="section__eyebrow">// 结构解析</div>
+            <h2 class="section__title">模块化<br>硬件架构</h2>
+            <p class="exploded__desc">
+                主控芯片、通信模块、网口组件、电源管理、工业天线、边缘计算单元、散热结构、工业外壳 — 八大核心模组，全模块化设计，支持按需配置与快速维护。
+            </p>
+        </div>
+        <div class="exploded__visual reveal">
+            <img src="产品拆解图.png" alt="全制式多链路网关拆解图">
+        </div>
+    </div>
+</section>
+
+
+<!-- ====== APPLICATION SCENARIOS ====== -->
+<section class="section section--surface" id="scenarios">
+    <div class="container">
+        <div class="section__header reveal">
+            <div class="section__eyebrow">// 应用场景</div>
+            <h2 class="section__title">为工业现场<br>而生</h2>
+        </div>
+        <div class="scenarios-grid">
+            <div class="scenario-card reveal">
+                <div class="scenario-card__num">SC-01</div>
+                <h3 class="scenario-card__title">数字工厂<br>设备互联</h3>
+                <p class="scenario-card__text">打通PLC、传感器、机器人等异构设备，建立全厂统一数据底座。</p>
+            </div>
+            <div class="scenario-card reveal">
+                <div class="scenario-card__num">SC-02</div>
+                <h3 class="scenario-card__title">矿区/隧道<br>弱网通信</h3>
+                <p class="scenario-card__text">多链路聚合保障远程操控指令不丢失，视频回传不中断。</p>
+            </div>
+            <div class="scenario-card reveal">
+                <div class="scenario-card__num">SC-03</div>
+                <h3 class="scenario-card__title">老旧产线<br>数字化改造</h3>
+                <p class="scenario-card__text">不停机完成存量PLC数据采集与上云，模板复用批量推广。</p>
+            </div>
+            <div class="scenario-card reveal">
+                <div class="scenario-card__num">SC-04</div>
+                <h3 class="scenario-card__title">远程运维<br>预测性维护</h3>
+                <p class="scenario-card__text">设备状态实时监控，故障提前预警，OTA远程固件升级。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ====== CTA ====== -->
+<section class="cta-band" id="contact">
+    <div class="cta-band__inner reveal">
+        <h2 class="cta-band__title">为您的产线<br>部署全制式<span class="accent">网关</span></h2>
+        <p class="cta-band__text">我们提供样机试用、技术方案咨询和现场POC测试。联系团队，探讨如何为您的工业场景打通全链路数据通道。</p>
+        <div class="cta-band__actions">
+            <button class="btn btn--primary">申请样机试用</button>
+            <button class="btn btn--ghost" style="background:transparent;color:var(--base);border-color:rgba(255,255,255,0.2);">联系技术团队</button>
+        </div>
+    </div>
+</section>
+
+
+<!-- ====== FOOTER ====== -->
+<footer class="footer">
+    <div class="footer__inner">
+        <div class="footer__top">
+            <div class="footer__brand">
+                <h2 class="font-display footer__brand-name">全制式多链路网关<span class="accent">.</span></h2>
+                <p class="footer__brand-desc">面向工业4.0的通信基础设施。多协议互通 · 多链路聚合 · 无感迁移 · 边缘智能 — 一站贯通工业数据全链路。</p>
+            </div>
+            <div class="footer__col">
+                <div class="footer__col-title">产品体系</div>
+                <a href="#">多链路网关</a>
+                <a href="#">轻量型边缘网关</a>
+                <a href="#">无感迁移网关</a>
+                <a href="#">远程运维云平台</a>
+            </div>
+            <div class="footer__col">
+                <div class="footer__col-title">核心技术</div>
+                <a href="#">多协议智能解析</a>
+                <a href="#">MPTCP多链路聚合</a>
+                <a href="#">PLC无感迁移</a>
+                <a href="#">边缘计算引擎</a>
+            </div>
+            <div class="footer__col">
+                <div class="footer__col-title">联系方式</div>
+                <a href="#">项目咨询与合作</a>
+                <a href="#">技术方案索取</a>
+                <a href="#">样机试用申请</a>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <span class="footer__copy">&copy; 2026 全制式多链路网关项目组. All rights reserved.</span>
+            <button class="footer__back-top" id="backToTop" aria-label="Back to top">↑ 回到顶部</button>
+        </div>
+    </div>
+</footer>
+
+
+<script>
+/* ============================================================
+   COMMON SCRIPTS
+   ============================================================ */
+(function () {
+    'use strict';
+
+    /* UTC Clock */
+    var clockEl = document.getElementById('utcClock');
+    if (clockEl) {
+        function updateClock() {
+            var n = new Date();
+            clockEl.textContent =
+                String(n.getUTCHours()).padStart(2, '0') + ':' +
+                String(n.getUTCMinutes()).padStart(2, '0') + ':' +
+                String(n.getUTCSeconds()).padStart(2, '0') + ' UTC';
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+
+    /* Mobile Nav Toggle */
+    var burger = document.getElementById('headerBurger');
+    var nav = document.getElementById('headerNav');
+    if (burger && nav) {
+        burger.addEventListener('click', function () {
+            var isOpen = nav.classList.toggle('open');
+            burger.setAttribute('aria-expanded', isOpen);
+        });
+        var navLinks = nav.querySelectorAll('a');
+        for (var i = 0; i < navLinks.length; i++) {
+            navLinks[i].addEventListener('click', function () {
+                nav.classList.remove('open');
+                burger.setAttribute('aria-expanded', 'false');
+            });
+        }
+    }
+
+    /* Scroll Reveal */
+    var reveals = document.querySelectorAll('.reveal');
+    if (reveals.length) {
+        var revealObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    var siblings = entry.target.parentElement.querySelectorAll('.reveal');
+                    var index = Array.from(siblings).indexOf(entry.target);
+                    entry.target.style.transitionDelay = (index * 0.06) + 's';
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+        setTimeout(function () {
+            reveals.forEach(function (el) {
+                if (!el.classList.contains('visible')) el.classList.add('visible');
+            });
+        }, 3000);
+
+        reveals.forEach(function (el) { revealObserver.observe(el); });
+    }
+
+    /* Bar Fill Animation on Scroll */
+    var barFills = document.querySelectorAll('.bar-track__fill');
+    barFills.forEach(function (bar) {
+        var targetWidth = bar.style.width;
+        bar.style.width = '0%';
+        var barObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    setTimeout(function () { bar.style.width = targetWidth; }, 250);
+                    barObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+        barObserver.observe(bar);
+    });
+
+    /* Back to Top */
+    var backTop = document.getElementById('backToTop');
+    if (backTop) {
+        backTop.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    /* Active nav highlight on scroll */
+    var sections = [];
+    var navAnchors = nav ? nav.querySelectorAll('a') : [];
+    navAnchors.forEach(function (a) {
+        var href = a.getAttribute('href');
+        if (href && href.startsWith('#') && href.length > 1) {
+            var el = document.getElementById(href.substring(1));
+            if (el) sections.push({ anchor: a, el: el });
+        }
+    });
+
+    if (sections.length) {
+        var ticking = false;
+        window.addEventListener('scroll', function () {
+            if (!ticking) {
+                window.requestAnimationFrame(function () {
+                    var scrollPos = window.scrollY + 120;
+                    var current = null;
+                    sections.forEach(function (s) {
+                        if (s.el.offsetTop <= scrollPos) current = s;
+                    });
+                    navAnchors.forEach(function (a) { a.classList.remove('active'); });
+                    if (current) current.anchor.classList.add('active');
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+    }
+})();
+</script>
+</body>
+</html>
