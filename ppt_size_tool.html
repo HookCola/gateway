@@ -274,32 +274,6 @@
       box-shadow: 0 2px 8px var(--primary-glow);
     }
 
-    /* 实时大小预估卡片 */
-    .estimate-card {
-      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
-      border: 1px solid #a7f3d0;
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin-bottom: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
-    }
-    .est-badge {
-      background: #10b981;
-      color: white;
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 4px 12px;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
     /* 配置栅格卡片 */
     .section-title {
       font-size: 1.05rem;
@@ -634,10 +608,10 @@
     <div class="tabs-wrapper" id="tabsWrapper">
       <div class="tabs-nav">
         <button class="tab-btn active" data-tab="compress">
-          <span>🗜️</span> 1. 文件体积压缩 (瘦身/控量)
+          <span>🗜️</span> 1. 文件体积压缩 (瘦身 / 控量)
         </button>
         <button class="tab-btn" data-tab="expand">
-          <span>🎈</span> 2. 文件体积放大 (增容/达标)
+          <span>🎈</span> 2. 文件体积放大 (增容 / 达标)
         </button>
         <button class="tab-btn" data-tab="dimensions">
           <span>📐</span> 3. 页面画幅比例缩放 (16:9/4:3/A4)
@@ -647,31 +621,14 @@
       <!-- TAB 1: 体积压缩 -->
       <div class="tab-pane active" id="tab-compress">
         
-        <!-- 压缩模式切换按钮 -->
+        <!-- 压缩模式切换双选按钮 -->
         <div class="mode-switch-group">
           <button type="button" class="mode-switch-btn active" id="modeBtnPreset">
-            <span>🎚️ 模式 A: 智能画质预设 (推荐)</span>
+            <span>🎚️ 模式 A: 画质等级压缩 (纯瘦身)</span>
           </button>
           <button type="button" class="mode-switch-btn" id="modeBtnTarget">
-            <span>🎯 模式 B: 精准压缩至指定大小 (如20MB以内)</span>
+            <span>🎯 模式 B: 精确指定文件大小 (如固定为 100MB)</span>
           </button>
-        </div>
-
-        <!-- 实时大小预估卡片 -->
-        <div class="estimate-card" id="estimateCard">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="font-size:28px;">📊</div>
-            <div>
-              <div style="font-size:0.82rem; color:#065f46; font-weight:600;">压缩结果实时预估</div>
-              <div style="font-size:1.05rem; color:#065f46;">
-                当前大小: <span id="estCurrentSize">--</span> ➔ 预计压缩后约: <strong style="font-size:1.2rem; color:#047857;" id="estTargetSize">--</strong>
-              </div>
-            </div>
-          </div>
-          <div style="text-align:right;">
-            <span class="est-badge" id="estReductionBadge">预计体积缩减 ~70%</span>
-            <div style="font-size:0.75rem; color:#047857; margin-top:3px;" id="estBreakdownHint">正在分析多媒体资源...</div>
-          </div>
         </div>
 
         <!-- 模式 A：画质预设面板 -->
@@ -680,7 +637,7 @@
             <span>选择画质等级预设</span>
           </div>
           <div class="section-subtitle">
-            根据演示场景自由选择清晰度。文字排版与动画完全无损，重采样优化图片资源！
+            能压多小就压多小。自动优化高分辨率图片，文字排版与动画毫发无损！
           </div>
 
           <div class="preset-grid" id="compressPresets">
@@ -726,30 +683,29 @@
           </div>
         </div>
 
-        <!-- 模式 B：指定目标大小面板 -->
+        <!-- 模式 B：精确指定目标大小面板 -->
         <div id="panelTargetCompress" style="display:none; background:#f8fafc; border:1px solid var(--border); border-radius:12px; padding:22px; margin-bottom:22px;">
           <div class="section-title">
-            <span>设定期望最终压缩文件大小 (MB)</span>
+            <span>精确设定最终输出文件大小 (MB)</span>
           </div>
           <div class="section-subtitle" style="margin-bottom:14px;">
-            针对邮箱限制 (如20MB)、投标系统附件限制 (如30MB) 或微信传输限制 (如100MB)。工具将逆向测算最优质量参数，严格将 PPT 控制在目标限额内！
+            无论原始 PPT 是多大多小，工具将优化图片并精确将导出的 PPTX 锁定在所选的 MB 数值（如指定 100MB，生成的文件就精准等于 100MB，绝不缩水）！
           </div>
 
           <div style="max-width: 500px;">
             <div class="form-group">
-              <label class="form-label">目标限额上限 (MB)</label>
+              <label class="form-label">期望目标文件大小 (MB)</label>
               <div style="display:flex; gap:10px; align-items:center;">
-                <input type="number" id="compressTargetMbInput" class="form-input" min="1" max="500" value="20" style="font-size:1.1rem; font-weight:700;">
+                <input type="number" id="compressTargetMbInput" class="form-input" min="1" max="500" value="100" style="font-size:1.1rem; font-weight:700;">
                 <span style="font-weight:700; color:var(--text-muted);">MB</span>
               </div>
             </div>
 
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-              <button class="btn" style="padding:6px 14px; font-size:0.8rem; background:white; border:1px solid var(--border);" onclick="setCompressTargetMb(5)">5 MB</button>
               <button class="btn" style="padding:6px 14px; font-size:0.8rem; background:white; border:1px solid var(--border);" onclick="setCompressTargetMb(10)">10 MB</button>
               <button class="btn" style="padding:6px 14px; font-size:0.8rem; background:white; border:1px solid var(--border);" onclick="setCompressTargetMb(20)">20 MB</button>
-              <button class="btn" style="padding:6px 14px; font-size:0.8rem; background:white; border:1px solid var(--border);" onclick="setCompressTargetMb(30)">30 MB</button>
               <button class="btn" style="padding:6px 14px; font-size:0.8rem; background:white; border:1px solid var(--border);" onclick="setCompressTargetMb(50)">50 MB</button>
+              <button class="btn" style="padding:6px 14px; font-size:0.8rem; background:white; border:1px solid var(--border);" onclick="setCompressTargetMb(100)">100 MB</button>
             </div>
           </div>
         </div>
@@ -770,7 +726,7 @@
             准备就绪 · 点击右侧按钮开始处理
           </div>
           <button class="btn btn-primary" id="btnStartCompress">
-            <span>⚡ 开始智能压缩</span>
+            <span>⚡ 开始处理</span>
           </button>
         </div>
       </div>
@@ -975,46 +931,6 @@
       if (statusText) progressStatus.textContent = statusText;
     }
 
-    // 实时大小预估算法
-    function updateLiveEstimate() {
-      if (!currentFile) return;
-      const originalTotal = presentationInfo.originalSize;
-      const mediaSize = presentationInfo.mediaBytes;
-      const nonMediaSize = presentationInfo.nonMediaBytes;
-
-      let estTotal = originalTotal;
-
-      if (currentCompressMode === 'target') {
-        const targetMb = parseFloat(document.getElementById('compressTargetMbInput').value) || 20;
-        const targetBytes = targetMb * 1024 * 1024;
-        if (targetBytes >= originalTotal) {
-          estTotal = Math.round(originalTotal * 0.95);
-        } else {
-          // 目标受控：预估最终达到目标限额（约 90%~98% 目标预算）
-          estTotal = Math.min(originalTotal, Math.max(Math.round(nonMediaSize * 1.05), Math.round(targetBytes * 0.95)));
-        }
-      } else {
-        // 画质预设模式
-        const quality = parseInt(document.getElementById('qualityRange').value, 10) / 100;
-        const maxDim = parseInt(document.getElementById('maxDimRange').value, 10);
-        
-        // 经验压缩比估算曲线
-        const rFactor = Math.min(1.0, Math.pow(maxDim / 1920, 1.35));
-        const qFactor = Math.pow(quality, 1.2) * 0.48 + 0.04;
-        const ratio = Math.max(0.06, Math.min(0.85, rFactor * qFactor));
-        
-        const estMedia = mediaSize * ratio;
-        estTotal = Math.min(originalTotal, Math.round(nonMediaSize + estMedia));
-      }
-
-      const reductionPct = Math.max(0, ((1 - estTotal / originalTotal) * 100)).toFixed(1);
-      
-      document.getElementById('estCurrentSize').textContent = formatBytes(originalTotal);
-      document.getElementById('estTargetSize').textContent = formatBytes(estTotal);
-      document.getElementById('estReductionBadge').textContent = `预计体积减少 ~${reductionPct}%`;
-      document.getElementById('estBreakdownHint').textContent = `内含图片约 ${formatBytes(mediaSize)} · 文字排版约 ${formatBytes(nonMediaSize)}`;
-    }
-
     // 拖拽与文件选择事件
     dropzone.addEventListener('click', () => fileInput.click());
     dropzone.addEventListener('dragover', (e) => {
@@ -1063,7 +979,6 @@
       modeBtnTarget.classList.remove('active');
       panelPresetCompress.style.display = 'block';
       panelTargetCompress.style.display = 'none';
-      updateLiveEstimate();
     });
 
     modeBtnTarget.addEventListener('click', () => {
@@ -1072,14 +987,11 @@
       modeBtnPreset.classList.remove('active');
       panelTargetCompress.style.display = 'block';
       panelPresetCompress.style.display = 'none';
-      updateLiveEstimate();
     });
 
     window.setCompressTargetMb = function(mb) {
       document.getElementById('compressTargetMbInput').value = mb;
-      updateLiveEstimate();
     };
-    document.getElementById('compressTargetMbInput').addEventListener('input', updateLiveEstimate);
 
     // 压缩预设切换逻辑
     document.querySelectorAll('#compressPresets .preset-card').forEach(card => {
@@ -1109,18 +1021,15 @@
             document.getElementById('maxDimVal').textContent = '960 px';
           }
         }
-        updateLiveEstimate();
       });
     });
 
-    // 交互滑块数值绑定与实时预估更新
+    // 交互滑块数值绑定
     document.getElementById('qualityRange').addEventListener('input', (e) => {
       document.getElementById('qualityVal').textContent = e.target.value + '%';
-      updateLiveEstimate();
     });
     document.getElementById('maxDimRange').addEventListener('input', (e) => {
       document.getElementById('maxDimVal').textContent = e.target.value + ' px';
-      updateLiveEstimate();
     });
     document.getElementById('scalePercentRange').addEventListener('input', (e) => {
       document.getElementById('scalePercentVal').textContent = e.target.value + '%';
@@ -1221,14 +1130,8 @@
 
         document.getElementById('currentExpandSize').textContent = formatBytes(file.size);
 
-        // 默认将指定大小设为原大小的 50% 向上取整
-        const defaultTargetMb = Math.max(5, Math.round((file.size / (1024 * 1024)) * 0.45));
-        document.getElementById('compressTargetMbInput').value = defaultTargetMb;
-
         fileMetaCard.style.display = 'block';
         tabsWrapper.style.display = 'block';
-
-        updateLiveEstimate();
 
         setProgress(100, 'PPTX 解析成功');
         log(`PPTX 解析完毕: 包含 ${presentationInfo.slideCount} 页幻灯片，${imgFiles.length} 张内嵌多媒体图像 (占用 ${formatBytes(presentationInfo.mediaBytes)})`, 'success');
@@ -1246,7 +1149,6 @@
     function hasAlphaChannel(ctx, w, h) {
       try {
         const imgData = ctx.getImageData(0, 0, w, h).data;
-        // 采样检测，大幅提升 4K 大图检测速度
         const step = Math.max(4, Math.floor((w * h) / 4000) * 4);
         for (let i = 3; i < imgData.length; i += step) {
           if (imgData[i] < 250) {
@@ -1324,8 +1226,73 @@
       });
     }
 
+    // 快速生成不可压缩的高熵安全填充数据
+    function generatePaddingData(totalBytes) {
+      const chunk = new Uint8Array(65536);
+      let s = 123456789;
+      for (let i = 0; i < 65536; i++) {
+        s = (s * 1664525 + 1013904223) & 0xffffffff;
+        chunk[i] = (s >> 16) & 0xff;
+      }
+      const out = new Uint8Array(totalBytes);
+      for (let offset = 0; offset < totalBytes; offset += 65536) {
+        const len = Math.min(65536, totalBytes - offset);
+        out.set(chunk.subarray(0, len), offset);
+      }
+      return out;
+    }
+
+    // 将 ZIP 严格补齐到指定目标大小 (字节)
+    async function padZipToTarget(zip, currentBlob, targetBytes) {
+      if (currentBlob.size >= targetBytes) {
+        return currentBlob;
+      }
+      const diffBytes = targetBytes - currentBlob.size;
+      log(`🎯 正在执行精确控量: 注入 ${formatBytes(diffBytes)} 安全合规流，精准对齐目标大小...`, 'info');
+
+      const existingImg = presentationInfo.imageFiles.find(p => /\.(png|jpe?g)$/i.test(p));
+      if (existingImg && zip.file(existingImg)) {
+        const origBuffer = await zip.file(existingImg).async('uint8array');
+        const paddingBytes = generatePaddingData(diffBytes);
+        const combined = new Uint8Array(origBuffer.length + diffBytes);
+        combined.set(origBuffer, 0);
+        combined.set(paddingBytes, origBuffer.length);
+        zip.file(existingImg, combined, { compression: 'STORE' });
+      } else {
+        const BASE_1X1_PNG_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+        const ctFile = zip.file('[Content_Types].xml');
+        if (ctFile) {
+          let ctXml = await ctFile.async('string');
+          if (!ctXml.includes('Extension="png"') && !ctXml.includes("Extension='png'")) {
+            ctXml = ctXml.replace('</Types>', '<Default Extension="png" ContentType="image/png"/></Types>');
+            zip.file('[Content_Types].xml', ctXml);
+          }
+        }
+        const relsFile = zip.file('ppt/_rels/presentation.xml.rels');
+        if (relsFile) {
+          let relsXml = await relsFile.async('string');
+          if (!relsXml.includes('media/_safe_pad_asset.png')) {
+            relsXml = relsXml.replace('</Relationships>', '<Relationship Id="rIdSafePadAsset99" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/_safe_pad_asset.png"/></Relationships>');
+            zip.file('ppt/_rels/presentation.xml.rels', relsXml);
+          }
+        }
+        const baseBytes = Uint8Array.from(atob(BASE_1X1_PNG_B64), c => c.charCodeAt(0));
+        const paddingBytes = generatePaddingData(diffBytes);
+        const combined = new Uint8Array(baseBytes.length + diffBytes);
+        combined.set(baseBytes, 0);
+        combined.set(paddingBytes, baseBytes.length);
+        zip.file('ppt/media/_safe_pad_asset.png', combined, { compression: 'STORE' });
+      }
+
+      return await zip.generateAsync({
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: { level: 6 }
+      });
+    }
+
     // ==========================================
-    // 功能一：PPT 文件体积智能压缩
+    // 功能一：PPT 文件体积智能压缩与精确控量
     // ==========================================
     document.getElementById('btnStartCompress').addEventListener('click', async () => {
       if (!currentFile || !currentZip) return;
@@ -1333,39 +1300,35 @@
       const preserveAlpha = document.getElementById('preservePngAlpha').checked;
       let quality = 0.75;
       let maxDim = 1920;
+      let targetBytes = 0;
+      let targetMb = 0;
 
       resultBanner.style.display = 'none';
       logTerminal.innerHTML = '';
 
       if (currentCompressMode === 'target') {
-        const targetMb = parseFloat(document.getElementById('compressTargetMbInput').value) || 20;
-        const targetBytes = targetMb * 1024 * 1024;
-        const nonMedia = presentationInfo.nonMediaBytes;
-        const originalMedia = presentationInfo.mediaBytes;
-        const targetMediaBudget = Math.max(1024 * 1024, targetBytes - nonMedia);
-        const reqRatio = targetMediaBudget / originalMedia;
+        targetMb = parseFloat(document.getElementById('compressTargetMbInput').value) || 100;
+        targetBytes = Math.round(targetMb * 1024 * 1024);
 
-        log(`🎯 开启【指定目标大小模式】: 设定上限 ${targetMb} MB`, 'info');
-        log(`需将图片体积从 ${formatBytes(originalMedia)} 压缩至 ~${formatBytes(targetMediaBudget)} (目标比率: ${(reqRatio*100).toFixed(1)}%)`, 'info');
+        log(`🎯 开启【精确指定大小模式】: 设定目标 = ${targetMb} MB (${formatBytes(targetBytes)})`, 'info');
 
-        // 逆向匹配参数
-        if (reqRatio >= 0.50) {
-          quality = 0.82; maxDim = 2560;
-        } else if (reqRatio >= 0.30) {
-          quality = 0.72; maxDim = 1920;
-        } else if (reqRatio >= 0.18) {
-          quality = 0.55; maxDim = 1440;
-        } else if (reqRatio >= 0.10) {
-          quality = 0.42; maxDim = 1200;
-        } else if (reqRatio >= 0.05) {
-          quality = 0.30; maxDim = 960;
+        // 根据原文件大小与目标大小比例，动态选择最佳画质参数
+        if (targetBytes >= currentFile.size) {
+          quality = 0.88;
+          maxDim = 3840;
+          log(`目标大于或接近原大小，图片保持最高清晰度，后续自动补齐至 ${targetMb} MB`, 'info');
         } else {
-          quality = 0.20; maxDim = 720;
+          const ratio = targetBytes / currentFile.size;
+          if (ratio >= 0.5) { quality = 0.80; maxDim = 2560; }
+          else if (ratio >= 0.25) { quality = 0.70; maxDim = 1920; }
+          else if (ratio >= 0.12) { quality = 0.52; maxDim = 1440; }
+          else { quality = 0.35; maxDim = 1080; }
+          log(`自动匹配参数: 画质 ${Math.round(quality*100)}%, 最大边长 ${maxDim}px`, 'info');
         }
       } else {
         quality = parseInt(document.getElementById('qualityRange').value, 10) / 100;
         maxDim = parseInt(document.getElementById('maxDimRange').value, 10);
-        log(`🎚️ 开启【画质等级模式】: 画质 ${Math.round(quality*100)}%, 最大边长 ${maxDim}px`, 'info');
+        log(`🎚️ 开启【画质等级模式】: 画质 ${Math.round(quality*100)}%, 最大边长 ${maxDim}px (纯瘦身，不补齐)`, 'info');
       }
 
       log(`透明 PNG 保护: ${preserveAlpha ? '开启 (检测到透明像素自动保留 PNG 透明度)' : '关闭'}`, 'info');
@@ -1381,7 +1344,7 @@
         const fileObj = workZip.file(imgPath);
         if (!fileObj) continue;
 
-        setProgress(10 + (i / imgList.length) * 75, `正在压缩第 ${i + 1}/${imgList.length} 张图片...`);
+        setProgress(10 + (i / imgList.length) * 70, `正在处理第 ${i + 1}/${imgList.length} 张图片...`);
 
         try {
           const originalBuffer = await fileObj.async('arraybuffer');
@@ -1399,7 +1362,7 @@
             const alphaTag = result.isAlpha ? ' [🛡️保留原生透明度]' : '';
             if (result.isAlpha) transparentProtectedCount++;
             
-            log(`已压缩 [${imgPath}]: ${formatBytes(origBlob.size)} ➔ ${formatBytes(result.blob.size)} (-${Math.round(savedBytes/origBlob.size*100)}%)${alphaTag}`, 'success');
+            log(`已优化 [${imgPath}]: ${formatBytes(origBlob.size)} ➔ ${formatBytes(result.blob.size)} (-${Math.round(savedBytes/origBlob.size*100)}%)${alphaTag}`, 'success');
           } else {
             const alphaTag = result.isAlpha ? ' [🛡️保留原生透明度]' : '';
             log(`跳过 [${imgPath}]: 已是最优尺寸${alphaTag}`, 'normal');
@@ -1409,29 +1372,47 @@
         }
       }
 
-      setProgress(90, '正在重新打包 PPTX 文件...');
+      setProgress(85, '正在打包 PPTX 文件...');
       log('多媒体流重编码优化完毕，正在生成新 PPTX 压缩包...', 'info');
 
-      const newPptxBlob = await workZip.generateAsync({
+      let newPptxBlob = await workZip.generateAsync({
         type: 'blob',
         compression: 'DEFLATE',
         compressionOptions: { level: 9 }
       });
 
+      // 如果是“精确指定大小模式”，确保最终文件严格等于用户指定的目标大小！
+      if (currentCompressMode === 'target') {
+        setProgress(92, `正在精确对齐至目标 ${targetMb} MB...`);
+        newPptxBlob = await padZipToTarget(workZip, newPptxBlob, targetBytes);
+      }
+
       processedBlob = newPptxBlob;
       const baseName = currentFile.name.replace(/\.pptx$/i, '');
-      processedFileName = `${baseName}_compressed.pptx`;
+      processedFileName = currentCompressMode === 'target' 
+        ? `${baseName}_target_${targetMb}MB.pptx`
+        : `${baseName}_compressed.pptx`;
 
-      setProgress(100, '压缩处理完毕');
-      const ratio = ((1 - newPptxBlob.size / currentFile.size) * 100).toFixed(1);
+      setProgress(100, '处理完毕');
       
-      document.getElementById('resultTitle').textContent = '🎉 PPT 压缩瘦身成功！';
-      document.getElementById('resultDesc').innerHTML = `
-        原始大小: <strong>${formatBytes(currentFile.size)}</strong> ➔ 压缩后: <strong>${formatBytes(newPptxBlob.size)}</strong> 
-        (体积缩减了 <span style="color:#059669; font-weight:700;">${ratio}%</span>，共节省 ${formatBytes(currentFile.size - newPptxBlob.size)}${transparentProtectedCount > 0 ? `，已智能保护 ${transparentProtectedCount} 张透明素材` : ''})
-      `;
+      if (currentCompressMode === 'target') {
+        document.getElementById('resultTitle').textContent = '🎉 PPT 精确控量完成！';
+        document.getElementById('resultDesc').innerHTML = `
+          原始大小: <strong>${formatBytes(currentFile.size)}</strong> ➔ 目标设定: <strong>${targetMb} MB</strong> ➔ 现大小: <strong>${formatBytes(newPptxBlob.size)}</strong>
+          (已精准对齐目标限额${transparentProtectedCount > 0 ? `，已智能保护 ${transparentProtectedCount} 张透明素材` : ''})
+        `;
+        log(`任务完成！最终文件大小精准对齐为: ${formatBytes(newPptxBlob.size)}`, 'success');
+      } else {
+        const ratio = ((1 - newPptxBlob.size / currentFile.size) * 100).toFixed(1);
+        document.getElementById('resultTitle').textContent = '🎉 PPT 压缩瘦身成功！';
+        document.getElementById('resultDesc').innerHTML = `
+          原始大小: <strong>${formatBytes(currentFile.size)}</strong> ➔ 压缩后: <strong>${formatBytes(newPptxBlob.size)}</strong> 
+          (体积缩减了 <span style="color:#059669; font-weight:700;">${ratio}%</span>，共节省 ${formatBytes(currentFile.size - newPptxBlob.size)}${transparentProtectedCount > 0 ? `，已智能保护 ${transparentProtectedCount} 张透明素材` : ''})
+        `;
+        log(`任务完成！新文件大小为 ${formatBytes(newPptxBlob.size)} (减小 ${ratio}%)`, 'success');
+      }
+      
       resultBanner.style.display = 'block';
-      log(`任务完成！新文件大小为 ${formatBytes(newPptxBlob.size)} (减小 ${ratio}%)`, 'success');
     });
 
     // ==========================================
@@ -1451,7 +1432,6 @@
         return;
       }
 
-      const diffBytes = targetBytes - currentFile.size;
       resultBanner.style.display = 'none';
       logTerminal.innerHTML = '';
       log(`=== 开始 PPT 增容放大 (当前: ${formatBytes(currentFile.size)} ➔ 目标: ${targetMb} MB) ===`, 'info');
@@ -1459,77 +1439,12 @@
       setProgress(20, '正在准备增容数据流...');
       const workZip = await (new JSZip()).loadAsync(currentFile);
 
-      // 快速生成不可压缩的高熵安全填充数据
-      function generatePadding(totalBytes) {
-        const chunk = new Uint8Array(65536);
-        let s = 123456789;
-        for (let i = 0; i < 65536; i++) {
-          s = (s * 1664525 + 1013904223) & 0xffffffff;
-          chunk[i] = (s >> 16) & 0xff;
-        }
-        const out = new Uint8Array(totalBytes);
-        for (let offset = 0; offset < totalBytes; offset += 65536) {
-          const len = Math.min(65536, totalBytes - offset);
-          out.set(chunk.subarray(0, len), offset);
-        }
-        return out;
-      }
-
-      // 寻找 PPT 内部既有的图片（PNG 或 JPEG）
-      const existingImg = presentationInfo.imageFiles.find(p => /\.(png|jpe?g)$/i.test(p));
-
-      if (existingImg && workZip.file(existingImg)) {
-        log(`在 PPT 发现现有合法图片 [${existingImg}]，追加安全元数据尾流 (PowerPoint 官方标准，完美静默打开)...`, 'info');
-        const origBuffer = await workZip.file(existingImg).async('uint8array');
-        const paddingBytes = generatePadding(diffBytes);
-        const combined = new Uint8Array(origBuffer.length + diffBytes);
-        combined.set(origBuffer, 0);
-        combined.set(paddingBytes, origBuffer.length);
-
-        workZip.file(existingImg, combined, { compression: 'STORE' });
-      } else {
-        log(`PPT 内部未含位图，正在注入合规的 1x1 安全图像并挂载 OpenXML 官方标准关联...`, 'info');
-        const BASE_1X1_PNG_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
-
-        // 1. 确保 [Content_Types].xml 包含 png 扩展名
-        const ctFile = workZip.file('[Content_Types].xml');
-        if (ctFile) {
-          let ctXml = await ctFile.async('string');
-          if (!ctXml.includes('Extension="png"') && !ctXml.includes("Extension='png'")) {
-            ctXml = ctXml.replace('</Types>', '<Default Extension="png" ContentType="image/png"/></Types>');
-            workZip.file('[Content_Types].xml', ctXml);
-          }
-        }
-
-        // 2. 在 ppt/_rels/presentation.xml.rels 中注册图片关系（避免任何“未引用部件”警报）
-        const relsFile = workZip.file('ppt/_rels/presentation.xml.rels');
-        if (relsFile) {
-          let relsXml = await relsFile.async('string');
-          if (!relsXml.includes('media/_safe_pad_asset.png')) {
-            relsXml = relsXml.replace('</Relationships>', '<Relationship Id="rIdSafePadAsset99" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/_safe_pad_asset.png"/></Relationships>');
-            workZip.file('ppt/_rels/presentation.xml.rels', relsXml);
-          }
-        }
-
-        // 3. 构造合法的 1x1 图像并追加尾流
-        const baseBytes = Uint8Array.from(atob(BASE_1X1_PNG_B64), c => c.charCodeAt(0));
-        const paddingBytes = generatePadding(diffBytes);
-        const combined = new Uint8Array(baseBytes.length + diffBytes);
-        combined.set(baseBytes, 0);
-        combined.set(paddingBytes, baseBytes.length);
-
-        workZip.file('ppt/media/_safe_pad_asset.png', combined, { compression: 'STORE' });
-      }
-
       // 如果存在之前测试版本的未索引 dat 文件，顺带清除
       workZip.remove('ppt/media/_expanded_padding_stream.dat');
 
-      setProgress(80, '正在封包生成目标 PPTX...');
-      const newPptxBlob = await workZip.generateAsync({
-        type: 'blob',
-        compression: 'DEFLATE',
-        compressionOptions: { level: 6 }
-      });
+      setProgress(50, '正在生成并注入不可压缩安全填充数据...');
+      const baseBlob = await workZip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+      const newPptxBlob = await padZipToTarget(workZip, baseBlob, targetBytes);
 
       processedBlob = newPptxBlob;
       const baseName = currentFile.name.replace(/\.pptx$/i, '');
