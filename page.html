@@ -415,39 +415,39 @@ h1, h2, h3, h4, .font-display {
    CLEAN STRUCTURE & MULTI-VIEW SECTION (NO MESSY TEXT BADGES)
    ============================================================ */
 .structure-section {
-    background: var(--term-bg); color: #FFFFFF;
+    background: var(--surface); color: var(--ink);
     border-bottom: var(--border); padding: var(--section-pad);
 }
-.structure-section .section__eyebrow { color: var(--term-green); }
-.structure-section .section__title { color: #FFFFFF; }
+.structure-section .section__eyebrow { color: var(--accent); }
+.structure-section .section__title { color: var(--ink); }
 
 .views-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: var(--gap); margin-top: 2.5rem;
 }
 .view-card {
-    background: var(--term-surface); border: 2px solid rgba(255, 255, 255, 0.15);
-    padding: 1.5rem; display: flex; flex-direction: column; align-items: center;
-    transition: all 0.25s; position: relative;
+    background: #FFFFFF; border: var(--border);
+    padding: 1.8rem; display: flex; flex-direction: column; align-items: center;
+    box-shadow: var(--shadow); transition: all 0.2s ease; position: relative;
 }
 .view-card:hover {
-    border-color: var(--accent); transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px var(--ink);
 }
 .view-card__label {
-    font-size: 0.72rem; color: #94a3b8; text-transform: uppercase;
-    letter-spacing: 0.1em; margin-bottom: 1rem; font-weight: 600; align-self: flex-start;
+    font-size: 0.72rem; color: var(--accent); text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 1rem; font-weight: 700; align-self: flex-start;
 }
 .view-card__img-wrap {
     height: 180px; width: 100%; display: flex; align-items: center; justify-content: center;
-    padding: 0.5rem;
+    background: #F8F9FA; border: var(--border-thin); padding: 0.5rem;
 }
 .view-card__img-wrap img {
     max-height: 100%; max-width: 100%; object-fit: contain;
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.45));
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.12));
 }
 .view-card__title {
-    font-size: 0.95rem; font-weight: 700; margin-top: 1rem; color: #FFFFFF; align-self: flex-start;
+    font-size: 1.05rem; font-weight: 700; margin-top: 1.2rem; color: var(--ink); align-self: flex-start;
 }
 
 /* ============================================================
